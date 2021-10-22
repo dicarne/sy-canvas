@@ -4,7 +4,7 @@ import { onMounted, reactive, ref, toRaw } from 'vue';
 import { decode, DrawData, DrawStoke } from "../lib/useDraw"
 import { throttle } from 'lodash';
 import { api, util } from "siyuan_api_cache_lib"
-import { NColorPicker, NSlider, NButton, NSpace, NModal, NCard } from "naive-ui"
+import { NColorPicker, NSlider, NButton, NSpace, NModal, NCard, useDialog } from "naive-ui"
 const canvas = ref<any>(null)
 const ctx = ref<CanvasRenderingContext2D>()
 const canvas_args = reactive({
@@ -162,6 +162,25 @@ const nooooo = () => {
     redraw()
     save()
 }
+const dialog = useDialog()
+const clearAll = () => {
+    dialog.warning({
+        title: '警告',
+        content: '是否清空所有内容？该操作不可撤销！',
+        positiveText: '确定',
+        negativeText: '不确定',
+        onPositiveClick: () => {
+            stokes.value = []
+            canvas_config.background = "#fff"
+            redraw()
+            save()
+            setting.show = false
+        },
+        onNegativeClick: () => {
+            
+        }
+    })
+}
 </script>
 <template>
     <canvas
@@ -228,6 +247,9 @@ const nooooo = () => {
                 :on-update:value="setting.changeColor"
                 :default-value="canvas_config.background"
             />
+            <n-space>
+                <n-button @click="clearAll">清空</n-button>
+            </n-space>
             <template #footer>
                 <n-space>
                     <n-button @click="setting.show = false">取消</n-button>

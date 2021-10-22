@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import SYCanvas from "./components/SYCanvas.vue"
+import { NDialogProvider } from "naive-ui"
 </script>
 
 <template>
-  <SYCanvas />
+  <n-dialog-provider>
+    <SYCanvas />
+  </n-dialog-provider>
 </template>
 
 <style>
-body{
+body {
   margin: 0px;
   overflow: hidden;
 }
