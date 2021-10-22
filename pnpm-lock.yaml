@@ -2,12 +2,14 @@ lockfileVersion: 5.3
 
 specifiers:
   '@vitejs/plugin-vue': ^1.9.3
+  siyuan_api_cache_lib: ^1.0.7
   typescript: ^4.4.3
   vite: ^2.6.4
   vue: ^3.2.16
   vue-tsc: ^0.3.0
 
 dependencies:
+  siyuan_api_cache_lib: 1.0.7
   vue: 3.2.20
 
 devDependencies:
@@ -691,6 +693,10 @@ packages:
     dependencies:
       lru-cache: 6.0.0
     dev: true
+
+  /siyuan_api_cache_lib/1.0.7:
+    resolution: {integrity: sha512-Oe+sJrdoM/dz62shy9C8g7HhWQdGTOkV9gs+gXo6O0DRZCIsaKKkg7ARhU9w7rgFm9Gnlq0ZbauIaTTF9Ikbyg==}
+    dev: false
 
   /source-map-js/0.6.2:
     resolution: {integrity: sha512-/3GptzWzu0+0MBQFrDKzw/DvvMTUORvgY6k6jd/VS6iCR4RDTKWH6v6WPwQoUO8667uQEf9Oe38DxAYWY5F/Ug==}
