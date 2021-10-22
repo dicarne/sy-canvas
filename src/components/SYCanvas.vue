@@ -4,7 +4,7 @@ import { onMounted, reactive, ref, toRaw } from 'vue';
 import { decode, DrawData, DrawStoke } from "../lib/useDraw"
 import { throttle } from 'lodash';
 import { api, util } from "siyuan_api_cache_lib"
-import { NColorPicker, NSlider, NButton, NSpace, c } from "naive-ui"
+import { NColorPicker, NSlider, NButton, NSpace, NModal, NCard } from "naive-ui"
 const canvas = ref<any>(null)
 const ctx = ref<CanvasRenderingContext2D>()
 const canvas_args = reactive({
@@ -51,7 +51,7 @@ onMounted(async () => {
         canvas_args.w = canvas.value.clientWidth
         canvas_args.h = canvas.value.clientHeight
         const data = await api.getBlockAttr(id!, "custom-data")
-        if(data) {
+        if (data) {
             const d = JSON.parse(decode(data.value)) as DrawData
             stokes.value = d.stokes
             canvas_config.background = d.config.background
@@ -113,6 +113,18 @@ const OnMouseMove = (arg: MouseEvent) => {
         _drawNewPoint(p)
     }
 }
+const save = () => {
+    api.setBlockAttrs({
+        id: util.currentNodeId()!,
+        attrs: {
+            "custom-data": btoa(encodeURI(JSON.stringify({
+                version: 1,
+                stokes: toRaw(stokes.value),
+                config: canvas_config
+            })))
+        }
+    })
+}
 const OnMouseUp = (arg: MouseEvent) => {
     if (mouseDown.value) {
         mouseDown.value = false
@@ -123,23 +135,33 @@ const OnMouseUp = (arg: MouseEvent) => {
         ctx.value.closePath()
         stokes.value.push(stoke.value)
         stoke.value = null as any
-
-        api.setBlockAttrs({
-            id: util.currentNodeId()!,
-            attrs: {
-                "custom-data": btoa(encodeURI(JSON.stringify({
-                    version: 1,
-                    stokes: toRaw(stokes.value),
-                    config: canvas_config
-                })))
-            }
-        })
+        save()
     }
 }
 const changeColor = (newc: string) => {
     canvas_config.color = newc
 }
 const colorSwatches = ref(['#FFFFFF', '#000', '#18A058', '#2080F0', '#F0A020', 'rgba(208, 48, 80, 1)'])
+
+const setting = reactive({
+    show: false,
+    background: "#fff",
+    changeColor: (newc: string) => {
+        setting.background = newc
+    },
+    ok: () => {
+        canvas_config.background = setting.background
+        setting.show = false
+        save()
+        setTimeout(redraw, 1)
+    }
+})
+// 撤销
+const nooooo = () => {
+    stokes.value.splice(stokes.value.length - 1, 1)
+    redraw()
+    save()
+}
 </script>
 <template>
     <canvas
@@ -159,10 +181,15 @@ const colorSwatches = ref(['#FFFFFF', '#000', '#18A058', '#2080F0', '#F0A020', '
         :style="{
             position: 'fixed',
             bottom: '0px',
-            width: '100vw'
+            width: '100vw',
+            backgroundColor: '#fff',
+            paddingTop: '10px',
+            paddingLeft: '5px'
         }"
     >
         <n-space>
+            <n-button @click="setting.show = true">设置</n-button>
+            <n-button @click="nooooo()">撤销</n-button>
             <n-color-picker
                 :on-update:value="changeColor"
                 :style="{
@@ -186,4 +213,27 @@ const colorSwatches = ref(['#FFFFFF', '#000', '#18A058', '#2080F0', '#F0A020', '
             />
         </n-space>
     </div>
+    <n-modal
+        v-model:show="setting.show"
+        :style="{
+            position: 'fixed',
+            top: '10px',
+        
+        }"
+    >
+        <n-card :style="{ width: '100vw' }" title="设置" :bordered="false" size="huge">
+            背景颜色
+            <n-color-picker
+                :show-alpha="false"
+                :on-update:value="setting.changeColor"
+                :default-value="canvas_config.background"
+            />
+            <template #footer>
+                <n-space>
+                    <n-button @click="setting.show = false">取消</n-button>
+                    <n-button @click="setting.ok()">确认</n-button>
+                </n-space>
+            </template>
+        </n-card>
+    </n-modal>
 </template>
