@@ -1,11 +1,11 @@
-# Vue 3 + Typescript + Vite
+# sy-canvas
+## 简介
+这是一个简单的思源画板。一般用于简单的笔记，最好不要拿来画画，这太考验设备性能了……  
+你可以选择不同颜色、粗细的画笔，也可以修改背景颜色。  
+提供简单的撤销功能。还贴心的提供了锁定功能，防止无意的修改。  
+**锁定规则**：  
+1. 刚创建的画板会自动解锁。
+2. 当文档关闭后，再打开，画板会自动锁定，需要点击解锁按钮。
 
-This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
-
-## Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's `.vue` type support plugin by running `Volar: Switch TS Plugin on/off` from VSCode command palette.
+## 其他
+如果觉得丑并且有什么好建议，欢迎告诉我！
