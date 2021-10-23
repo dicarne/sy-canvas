@@ -217,18 +217,20 @@ const clearAll = () => {
             width: '100vw',
             backgroundColor: '#fff',
             paddingTop: '10px',
-            paddingLeft: '5px'
+            paddingLeft: '5px',
+            paddingBottom: '10px'
         }"
     >
-        <n-space>
+        <n-space :align="'center'">
             <n-button @click="setting.show = true">设置</n-button>
-            <n-button @click="nooooo()">撤销</n-button>
+            <n-button @click="nooooo()" :disabled="stokes.length === 0">撤销</n-button>
             <n-color-picker
                 :on-update:value="changeColor"
                 :style="{
                     width: '40vw',
                     minWidth: '300px',
-                    maxWidth: '500px'
+                    maxWidth: '500px',
+                    display: 'block'
                 }"
                 :show-alpha="false"
                 :swatches="colorSwatches"
@@ -241,7 +243,8 @@ const clearAll = () => {
                 :style="{
                     width: '40vw',
                     minWidth: '300px',
-                    maxWidth: '500px'
+                    maxWidth: '500px',
+                    '--rail-height': '10px'
                 }"
             />
         </n-space>
@@ -274,3 +277,5 @@ const clearAll = () => {
     </n-modal>
 </template>
 
+<style>
+</style>
