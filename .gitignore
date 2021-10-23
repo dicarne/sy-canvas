@@ -4,4 +4,4 @@ dist
 dist-ssr
 *.local
 .vscode
-.js.map
+*.js.map
