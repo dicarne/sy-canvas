@@ -218,10 +218,11 @@ const clearAll = () => {
             backgroundColor: '#fff',
             paddingTop: '10px',
             paddingLeft: '5px',
-            paddingBottom: '10px'
+            paddingBottom: '10px',
+            'box-shadow': '0px 0px 10px #ddd'
         }"
     >
-        <n-space :align="'center'">
+        <n-space :align="'center'" :justify="'center'">
             <n-button @click="setting.show = true">设置</n-button>
             <n-button @click="nooooo()" :disabled="stokes.length === 0">撤销</n-button>
             <n-color-picker
