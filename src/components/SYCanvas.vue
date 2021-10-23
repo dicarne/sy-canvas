@@ -23,6 +23,7 @@ const canvas_config = reactive({
     width: 3,
     background: "#fff"
 })
+const lock = ref(true)
 const redraw = throttle(() => {
     if (!ctx.value) return
     ctx.value.fillStyle = canvas_config.background
@@ -57,6 +58,8 @@ onMounted(async () => {
             canvas_config.background = d.config.background
             canvas_config.color = d.config.color
             canvas_config.width = d.config.width
+        } else {
+            lock.value = false
         }
         setTimeout(redraw, 1)
     }
@@ -95,6 +98,7 @@ const getMousePosition = (e: MouseEvent | TouchEvent) => {
 }
 
 const OnMouseDown = (arg: MouseEvent | TouchEvent) => {
+    if (lock.value) return
     const p = getMousePosition(arg)
     mouseDown.value = true
     if (!ctx.value) return
@@ -117,7 +121,7 @@ const _drawNewPoint = (p: { x: number, y: number }) => {
     ctx.value.stroke()
 }
 const OnMouseMove = (arg: MouseEvent | TouchEvent) => {
-    if (mouseDown.value) {
+    if (mouseDown.value && !lock.value) {
         const p = getMousePosition(arg)
         _drawNewPoint(p)
     }
@@ -135,7 +139,7 @@ const save = () => {
     })
 }
 const OnMouseUp = (arg: MouseEvent | TouchEvent) => {
-    if (mouseDown.value) {
+    if (mouseDown.value && !lock.value) {
         mouseDown.value = false
         if (!ctx.value) return
         const p = getMousePosition(arg)
@@ -223,9 +227,11 @@ const clearAll = () => {
         }"
     >
         <n-space :align="'center'" :justify="'center'">
-            <n-button @click="setting.show = true">设置</n-button>
-            <n-button @click="nooooo()" :disabled="stokes.length === 0">撤销</n-button>
+            <n-button @click="lock = !lock">{{ lock ? '解锁' : '锁定' }}</n-button>
+            <n-button v-show="!lock" @click="setting.show = true">设置</n-button>
+            <n-button v-show="!lock" @click="nooooo()" :disabled="stokes.length === 0">撤销</n-button>
             <n-color-picker
+                v-show="!lock"
                 :on-update:value="changeColor"
                 :style="{
                     width: '40vw',
@@ -237,6 +243,7 @@ const clearAll = () => {
                 :swatches="colorSwatches"
             />
             <n-slider
+                v-show="!lock"
                 v-model:value="canvas_config.width"
                 :step="1"
                 :min="1"
