@@ -77,15 +77,24 @@ const getClientSize = () => {
     return null
 }
 
-const getMousePosition = (e: MouseEvent) => {
+const getMousePosition = (e: MouseEvent | TouchEvent) => {
     const c = getClientSize()!
-    return {
-        x: Math.trunc(e.clientX / c.w * canvas_args.w),
-        y: Math.trunc(e.clientY / c.h * canvas_args.h)
+    if (e instanceof TouchEvent) {
+        const t = e.changedTouches[0]
+        return {
+            x: Math.trunc(t.clientX / c.w * canvas_args.w),
+            y: Math.trunc(t.clientY / c.h * canvas_args.h)
+        }
+    } else if (e instanceof MouseEvent) {
+        return {
+            x: Math.trunc(e.clientX / c.w * canvas_args.w),
+            y: Math.trunc(e.clientY / c.h * canvas_args.h)
+        }
     }
+    throw new Error("unknown device!")
 }
 
-const OnMouseDown = (arg: MouseEvent) => {
+const OnMouseDown = (arg: MouseEvent | TouchEvent) => {
     const p = getMousePosition(arg)
     mouseDown.value = true
     if (!ctx.value) return
@@ -107,7 +116,7 @@ const _drawNewPoint = (p: { x: number, y: number }) => {
     ctx.value.lineTo(p.x, p.y)
     ctx.value.stroke()
 }
-const OnMouseMove = (arg: MouseEvent) => {
+const OnMouseMove = (arg: MouseEvent | TouchEvent) => {
     if (mouseDown.value) {
         const p = getMousePosition(arg)
         _drawNewPoint(p)
@@ -125,7 +134,7 @@ const save = () => {
         }
     })
 }
-const OnMouseUp = (arg: MouseEvent) => {
+const OnMouseUp = (arg: MouseEvent | TouchEvent) => {
     if (mouseDown.value) {
         mouseDown.value = false
         if (!ctx.value) return
@@ -177,10 +186,11 @@ const clearAll = () => {
             setting.show = false
         },
         onNegativeClick: () => {
-            
+
         }
     })
 }
+
 </script>
 <template>
     <canvas
@@ -191,6 +201,10 @@ const clearAll = () => {
         :width="canvas_args.w"
         :height="canvas_args.h"
         ref="canvas"
+        :ontouchstart="OnMouseDown"
+        :ontouchmove="OnMouseMove"
+        :ontouchend="OnMouseUp"
+        :ontouchcancel="OnMouseUp"
         :onmousedown="OnMouseDown"
         :onmousemove="OnMouseMove"
         :onmouseleave="OnMouseUp"
@@ -259,3 +273,4 @@ const clearAll = () => {
         </n-card>
     </n-modal>
 </template>
+
