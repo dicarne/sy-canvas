@@ -80,7 +80,7 @@ const getClientSize = () => {
     return null
 }
 
-const getMousePosition = (e: MouseEvent | TouchEvent) => {
+const getMousePosition = (e: MouseEvent | TouchEvent | PointerEvent) => {
     const c = getClientSize()!
     if (e instanceof TouchEvent) {
         const t = e.changedTouches[0]
@@ -88,7 +88,7 @@ const getMousePosition = (e: MouseEvent | TouchEvent) => {
             x: Math.trunc(t.clientX / c.w * canvas_args.w),
             y: Math.trunc(t.clientY / c.h * canvas_args.h)
         }
-    } else if (e instanceof MouseEvent) {
+    } else if ((e instanceof MouseEvent) || (e instanceof PointerEvent)) {
         return {
             x: Math.trunc(e.clientX / c.w * canvas_args.w),
             y: Math.trunc(e.clientY / c.h * canvas_args.h)
@@ -215,10 +215,10 @@ const here = (e: PointerEvent) => {
         :ontouchmove="OnMouseMove"
         :ontouchend="OnMouseUp"
         :ontouchcancel="OnMouseUp"
-        :onmousedown="OnMouseDown"
-        :onmousemove="OnMouseMove"
-        :onmouseleave="OnMouseUp"
-        :onmouseup="OnMouseUp"
+        :onpointerdown="OnMouseDown"
+        :onpointermove="OnMouseMove"
+        :onpointerleave="OnMouseUp"
+        :onpointerup="OnMouseUp"
     />
     <div
         :style="{

@@ -14,4 +14,7 @@ body {
   margin: 0px;
   overflow: hidden;
 }
+html {
+  touch-action: none;
+}
 </style>
