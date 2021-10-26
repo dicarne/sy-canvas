@@ -4,8 +4,10 @@ import { onMounted, reactive, ref, toRaw } from 'vue';
 import { decode, DrawData, DrawStoke } from "../lib/useDraw"
 import { throttle } from 'lodash';
 import { api, util } from "siyuan_api_cache_lib"
-import { NColorPicker, NSlider, NButton, NSpace, NModal, NCard, useDialog } from "naive-ui"
+import { NColorPicker, NSlider, NButton, NSpace, NModal, NCard, NInput, useDialog } from "naive-ui"
+import { useConfig } from "../lib/useConfig"
 const canvas = ref<any>(null)
+const config = useConfig()
 const ctx = ref<CanvasRenderingContext2D>()
 const canvas_args = reactive({
     w: 1000,
@@ -88,7 +90,7 @@ const getMousePosition = (e: MouseEvent | TouchEvent | PointerEvent) => {
             x: Math.trunc(t.clientX / c.w * canvas_args.w),
             y: Math.trunc(t.clientY / c.h * canvas_args.h)
         }
-    } else if ((e instanceof MouseEvent) || (e instanceof PointerEvent)) {
+    } else if (e instanceof MouseEvent) {
         return {
             x: Math.trunc(e.clientX / c.w * canvas_args.w),
             y: Math.trunc(e.clientY / c.h * canvas_args.h)
@@ -129,6 +131,7 @@ const OnMouseMove = (arg: MouseEvent | TouchEvent) => {
     }
 }
 const save = () => {
+    config.comfirm_change()
     api.setBlockAttrs({
         id: util.currentNodeId()!,
         attrs: {
@@ -196,10 +199,8 @@ const clearAll = () => {
         }
     })
 }
-const here = (e: PointerEvent) => {
-    console.log("!!!")
-    e.preventDefault()
-    e.stopPropagation()
+const openHelp = () => {
+    window.open("https://github.com/dicarne/sy-canvas#设置")
 }
 </script>
 <template>
@@ -246,7 +247,7 @@ const here = (e: PointerEvent) => {
                     display: 'block'
                 }"
                 :show-alpha="false"
-                :swatches="colorSwatches"
+                :swatches="config.config.value?.colors ? config.config.value.colors : colorSwatches"
             />
             <n-slider
                 v-show="!lock"
@@ -277,12 +278,16 @@ const here = (e: PointerEvent) => {
                 :show-alpha="false"
                 :on-update:value="setting.changeColor"
                 :default-value="canvas_config.background"
+            />配置代码
+            <n-input
+                placeholder="代码块超链接或block id"
+                :on-update:value="config.set_config_url"
+                :value="(config.my_config_url).value"
             />
-            <n-space>
-                <n-button @click="clearAll">清空</n-button>
-            </n-space>
             <template #footer>
                 <n-space>
+                    <n-button @click="openHelp">帮助</n-button>
+                    <n-button @click="clearAll">清空</n-button>
                     <n-button @click="setting.show = false">取消</n-button>
                     <n-button @click="setting.ok()">确认</n-button>
                 </n-space>
