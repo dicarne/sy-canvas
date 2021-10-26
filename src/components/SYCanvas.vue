@@ -123,6 +123,8 @@ const _drawNewPoint = (p: { x: number, y: number }) => {
 const OnMouseMove = (arg: MouseEvent | TouchEvent) => {
     if (mouseDown.value && !lock.value) {
         const p = getMousePosition(arg)
+        arg.preventDefault()
+        arg.stopPropagation()
         _drawNewPoint(p)
     }
 }
@@ -194,7 +196,11 @@ const clearAll = () => {
         }
     })
 }
-
+const here = (e: PointerEvent) => {
+    console.log("!!!")
+    e.preventDefault()
+    e.stopPropagation()
+}
 </script>
 <template>
     <canvas
