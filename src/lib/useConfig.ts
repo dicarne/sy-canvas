@@ -18,6 +18,8 @@ export const useConfig = () => {
                 }
             })
         }
+        if (current_config_url == null && my_config_url.value != "")
+            window.localStorage.setItem("sy-canvas-config", my_config_url.value)
         readConfig()
     })
     const set_config_url = (newu: string) => {
