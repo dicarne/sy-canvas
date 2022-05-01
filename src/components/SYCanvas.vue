@@ -211,6 +211,9 @@ const setting = reactive({
     show: false,
     background: "#fff",
     changeColor: (newc: string) => {
+        stokes.value.forEach(s => {
+            if (s.color === setting.background) s.color = newc
+        })
         setting.background = newc
     },
     ok: () => {
