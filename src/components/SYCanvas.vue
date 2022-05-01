@@ -4,7 +4,7 @@ import { onMounted, reactive, ref, toRaw } from 'vue';
 import { decode, DrawData, DrawStoke, Point } from "../lib/useDraw"
 import { throttle } from 'lodash';
 import { api, util } from "siyuan_api_cache_lib"
-import { NColorPicker, NSlider, NButton, NSpace, NModal, NCard, NInput, useDialog } from "naive-ui"
+import { NColorPicker, NSlider, NButton, NSpace, NModal, NCard, NInput, useDialog, NIcon } from "naive-ui"
 import { useConfig } from "../lib/useConfig"
 const canvas = ref<any>(null)
 const config = useConfig()
@@ -268,7 +268,7 @@ const openHelp = () => {
         paddingLeft: '5px',
         paddingBottom: '10px',
         'box-shadow': '0px 0px 10px #ddd'
-    }">
+    }" v-if="!lock">
         <n-space :align="'center'" :justify="'center'">
             <n-button @click="lock = !lock">{{ lock ? '解锁' : '锁定' }}</n-button>
             <n-button v-show="!lock" @click="setting.show = true">设置</n-button>
@@ -288,6 +288,24 @@ const openHelp = () => {
             }" />
         </n-space>
     </div>
+    <n-button circle :style="{
+        position: 'absolute',
+        width: '32px',
+        height: '32px',
+        right: '10px',
+        bottom: '10px'
+    }" v-if="lock" @click="lock = !lock">
+        <template #icon>
+            <n-icon><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" color="#666666"
+                    viewBox="0 0 512 512">
+                    <path d="M336 208v-95a80 80 0 0 0-160 0v95" fill="none" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="32"></path>
+                    <rect x="96" y="208" width="320" height="272" rx="48" ry="48" fill="none" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="32"></rect>
+                </svg></n-icon>
+        </template>
+    </n-button>
+
     <n-modal v-model:show="setting.show" :style="{
         position: 'fixed',
         top: '10px',
