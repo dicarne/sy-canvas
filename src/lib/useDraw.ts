@@ -29,3 +29,4 @@ export interface DrawData {
         background: string
     }
 }
+export interface Point { x: number, y: number }
