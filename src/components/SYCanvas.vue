@@ -199,6 +199,7 @@ const OnMouseUp = (arg: MouseEvent | TouchEvent) => {
         stokes.value.push(stoke.value)
         //}
         stoke.value = null as any
+        restore.value = []
         save()
     }
 }
@@ -223,9 +224,19 @@ const setting = reactive({
         setTimeout(redraw, 1)
     }
 })
+const restore = ref<{
+    width: number;
+    color: string;
+    points: {
+        x: number;
+        y: number;
+    }[];
+}[]>([])
+
 // 撤销
 const nooooo = () => {
-    stokes.value.splice(stokes.value.length - 1, 1)
+    let it = stokes.value.splice(stokes.value.length - 1, 1)
+    restore.value.push(it[0])
     redraw()
     save()
 }
@@ -251,6 +262,14 @@ const clearAll = () => {
 const openHelp = () => {
     window.open("https://github.com/dicarne/sy-canvas#设置")
 }
+const revert = () => {
+    if (restore.value.length > 0) {
+        let last = restore.value.splice(restore.value.length - 1, 1)
+        stokes.value.push(last[0])
+        redraw()
+        save()
+    }
+}
 </script>
 <template>
     <canvas :style="{
@@ -273,6 +292,7 @@ const openHelp = () => {
             <n-button @click="lock = !lock">{{ lock ? '解锁' : '锁定' }}</n-button>
             <n-button v-show="!lock" @click="setting.show = true">设置</n-button>
             <n-button v-show="!lock" @click="nooooo()" :disabled="stokes.length === 0">撤销</n-button>
+            <n-button v-show="!lock" @click="revert()" :disabled="restore.length === 0">恢复</n-button>
             <n-color-picker v-show="!lock" :on-update:value="changeColor" :style="{
                 width: '40vw',
                 minWidth: '300px',
