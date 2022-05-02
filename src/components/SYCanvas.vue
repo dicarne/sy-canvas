@@ -15,6 +15,8 @@ const canvas_args = reactive({
 })
 const mouseDown = ref(false)
 const mode = ref<"DRAW" | "EARSE">("DRAW")
+const dmode = ref<'DRAW' | 'EARSE'>('DRAW')
+
 const stokes = ref<DrawStoke[]>([])
 const stoke = ref<DrawStoke>({
     width: 2,
@@ -105,7 +107,7 @@ const OnMouseDown = (arg: MouseEvent | TouchEvent) => {
     if (a_arg.button && a_arg.button == 2) {
         mode.value = "EARSE"
     } else {
-        mode.value = "DRAW"
+        mode.value = dmode.value
     }
     if (lock.value) return
     const p = getMousePosition(arg)
@@ -270,6 +272,12 @@ const revert = () => {
         save()
     }
 }
+const changeDrawMode = () => {
+    if (dmode.value === 'DRAW')
+        dmode.value = 'EARSE'
+    else
+        dmode.value = 'DRAW'
+}
 </script>
 <template>
     <canvas :style="{
@@ -293,6 +301,9 @@ const revert = () => {
             <n-button v-show="!lock" @click="setting.show = true">设置</n-button>
             <n-button v-show="!lock" @click="nooooo()" :disabled="stokes.length === 0">撤销</n-button>
             <n-button v-show="!lock" @click="revert()" :disabled="restore.length === 0">恢复</n-button>
+            <n-button v-show="!lock" @click="changeDrawMode()">{{ dmode == 'DRAW' ? "橡皮" :
+                    "画笔"
+            }}</n-button>
             <n-color-picker v-show="!lock" :on-update:value="changeColor" :style="{
                 width: '40vw',
                 minWidth: '300px',
