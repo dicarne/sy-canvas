@@ -16,7 +16,6 @@ const canvas_args = reactive({
 const mouseDown = ref(false)
 const mode = ref<"DRAW" | "EARSE">("DRAW")
 const dmode = ref<'DRAW' | 'EARSE'>('DRAW')
-
 const stokes = ref<DrawStoke[]>([])
 const stoke = ref<DrawStoke>({
     width: 2,
@@ -31,6 +30,7 @@ const canvas_config = reactive({
 const lock = ref(true)
 const redraw = throttle(() => {
     if (!ctx.value) return
+    save()
     ctx.value.fillStyle = canvas_config.background
     ctx.value.fillRect(0, 0, canvas_args.w, canvas_args.h)
     stokes.value.forEach(s => {
@@ -72,7 +72,7 @@ onMounted(async () => {
         canvas_args.w = canvas.value.clientWidth
         canvas_args.h = canvas.value.clientHeight
         ctx.value = canvas.value.getContext("2d");
-        setTimeout(redraw, 1)
+        setTimeout(() => redraw(), 1)
     }
 })
 const getClientSize = () => {
@@ -184,8 +184,10 @@ const save = () => {
             "custom-data": btoa(encodeURI(JSON.stringify({
                 version: 1,
                 stokes: toRaw(stokes.value),
-                config: canvas_config
-            })))
+                config: canvas_config,
+                
+            }))),
+            "custom-update-time": JSON.stringify(new Date())
         }
     })
 }
